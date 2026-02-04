@@ -40,7 +40,7 @@ Antes de começar, certifique-se de ter instalado:
    **Se usar credenciais diferentes**, edite diretamente:
    - [parte3/load_data.py](parte3/load_data.py#L429)
    - [parte3/executar_queries.py](parte3/executar_queries.py#L11)
-   - [parte4/backend/main.py](parte4/backend/main.py#L156)
+   - [parte4/backend/main.py](parte4/backend/main.py#L118)
 
 
 
