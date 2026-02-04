@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operadoras de Saúde - Dashboard</title>
+    
+    <!-- Vue 3 -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    
+    <!-- Chart.js para gráficos -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Header -->
+        <div class="header">
+            <h1>Operadoras de Saúde</h1>
+            <p>Dashboard de Análise de Despesas - ANS Dados Abertos</p>
+        </div>
+        
+        <!-- Estatísticas -->
+        <div class="stats-container" v-if="estatisticas">
+            <div class="stat-card">
+                <div class="stat-label">Total de Operadoras</div>
+                <div class="stat-value">{{ estatisticas.total_operadoras }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Despesas Totais</div>
+                <div class="stat-value">{{ formatarMoeda(estatisticas.total_despesas) }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Média de Despesas</div>
+                <div class="stat-value">{{ formatarMoeda(estatisticas.media_despesas) }}</div>
+            </div>
+        </div>
+        
+        <!-- Container Principal -->
+        <div class="main-container">
+            <!-- Loading -->
+            <div v-if="loading" class="loading">
+                <div class="spinner"></div>
+                <p>Carregando dados...</p>
+            </div>
+            
+            <!-- Erro -->
+            <div v-if="erro" class="error">
+                <strong>Erro:</strong> {{ erro }}
+                <br><br>
+                <button @click="carregarDados" style="padding: 10px 20px; background: #667eea; color: white; border: none; border-radius: 6px; cursor: pointer;">
+                    🔄 Tentar Novamente
+                </button>
+            </div>
+            
+            <!-- Conteúdo -->
+            <div v-if="!loading && !erro">
+                <!-- Busca -->
+                <div class="search-container">
+                    <input 
+                        type="text" 
+                        class="search-input" 
+                        v-model="termoBusca"
+                        @input="buscar"
+                        placeholder="Buscar por razão social ou CNPJ..."
+                    >
+                </div>
+                
+                <!-- Tabela -->
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>CNPJ</th>
+                                <th>Razão Social</th>
+                                <th>UF</th>
+                                <th>Modalidade</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="operadora in operadoras" :key="operadora.cnpj" @click="verDetalhes(operadora.cnpj)">
+                                <td>{{ formatarCNPJ(operadora.cnpj) }}</td>
+                                <td><strong>{{ operadora.razao_social }}</strong></td>
+                                <td>
+                                    <span v-if="operadora.uf" class="badge badge-primary">{{ operadora.uf }}</span>
+                                    <span v-else style="color: #999;">-</span>
+                                </td>
+                                <td style="font-size: 0.85rem; color: #666;">{{ operadora.modalidade || '-' }}</td>
+                                <td>
+                                    <button @click.stop="verDetalhes(operadora.cnpj)" style="padding: 8px 16px; background: #667eea; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.85rem;">
+                                        Ver Detalhes
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <div v-if="operadoras.length === 0" style="text-align: center; padding: 40px; color: #999;">
+                        Nenhuma operadora encontrada
+                    </div>
+                </div>
+                
+                <!-- Paginação -->
+                <div class="pagination" v-if="paginacao.total_pages > 1">
+                    <button @click="irParaPagina(1)" :disabled="paginacao.page === 1">
+                        Primeira
+                    </button>
+                    <button @click="irParaPagina(paginacao.page - 1)" :disabled="paginacao.page === 1">
+                        Anterior
+                    </button>
+                    <span>
+                        Página {{ paginacao.page }} de {{ paginacao.total_pages }}
+                        ({{ paginacao.total_items }} operadoras)
+                    </span>
+                    <button @click="irParaPagina(paginacao.page + 1)" :disabled="paginacao.page === paginacao.total_pages">
+                        Próxima
+                    </button>
+                    <button @click="irParaPagina(paginacao.total_pages)" :disabled="paginacao.page === paginacao.total_pages">
+                        Última
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Gráfico de Distribuição por UF - Fora do v-if para persistir -->
+        <div class="chart-container" v-if="estatisticas && estatisticas.distribuicao_uf && estatisticas.distribuicao_uf.length > 0">
+            <h2>Distribuição de Despesas por UF</h2>
+            <canvas id="chartUF" width="400" height="200"></canvas>
+        </div>
+        
+        <!-- Modal de Detalhes -->
+        <div v-if="mostrarModal" class="modal-overlay" @click.self="fecharModal">
+            <div class="modal">
+                <div v-if="loadingModal" class="loading">
+                    <div class="spinner"></div>
+                    <p>Carregando detalhes...</p>
+                </div>
+                
+                <div v-if="!loadingModal && operadoraSelecionada">
+                    <div class="modal-header">
+                        <h2>{{ operadoraSelecionada.razao_social }}</h2>
+                        <button class="close-button" @click="fecharModal">✕ Fechar</button>
+                    </div>
+                    
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <div class="detail-label">CNPJ</div>
+                            <div class="detail-value">{{ formatarCNPJ(operadoraSelecionada.cnpj) }}</div>
+                        </div>
+                        <div class="detail-item" v-if="operadoraSelecionada.registro_ans">
+                            <div class="detail-label">Registro ANS</div>
+                            <div class="detail-value">{{ operadoraSelecionada.registro_ans }}</div>
+                        </div>
+                        <div class="detail-item" v-if="operadoraSelecionada.uf">
+                            <div class="detail-label">UF</div>
+                            <div class="detail-value">{{ operadoraSelecionada.uf }}</div>
+                        </div>
+                        <div class="detail-item" v-if="operadoraSelecionada.modalidade">
+                            <div class="detail-label">Modalidade</div>
+                            <div class="detail-value" style="font-size: 0.9rem;">{{ operadoraSelecionada.modalidade }}</div>
+                        </div>
+                        <div class="detail-item" v-if="operadoraSelecionada.total_despesas">
+                            <div class="detail-label">Total de Despesas</div>
+                            <div class="detail-value">{{ formatarMoeda(operadoraSelecionada.total_despesas) }}</div>
+                        </div>
+                        <div class="detail-item" v-if="operadoraSelecionada.media_despesas">
+                            <div class="detail-label">Média por Trimestre</div>
+                            <div class="detail-value">{{ formatarMoeda(operadoraSelecionada.media_despesas) }}</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Histórico de Despesas -->
+                    <div class="despesas-table">
+                        <h3>Histórico de Despesas</h3>
+                        <table v-if="despesasOperadora.length > 0">
+                            <thead>
+                                <tr>
+                                    <th>Período</th>
+                                    <th>Ano</th>
+                                    <th>Trimestre</th>
+                                    <th>Valor</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="despesa in despesasOperadora" :key="despesa.periodo">
+                                    <td><span class="badge badge-success">{{ despesa.periodo }}</span></td>
+                                    <td>{{ despesa.ano }}</td>
+                                    <td>Q{{ despesa.trimestre }}</td>
+                                    <td><strong>{{ formatarMoeda(despesa.valor_despesas) }}</strong></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        
+                        <!-- Mensagem quando não há despesas -->
+                        <div v-if="!loadingModal && despesasOperadora.length === 0" style="padding: 20px; text-align: center; color: #666; background: #f5f5f5; border-radius: 8px; margin-top: 10px;">
+                            <p style="margin: 0;">Esta operadora não possui histórico de despesas nos últimos 3 trimestres.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="scripts/app.js"></script>
+</body>
+</html>

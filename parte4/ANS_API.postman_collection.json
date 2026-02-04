@@ -1,0 +1,248 @@
+{
+	"info": {
+		"_postman_id": "ans-api-collection-2026",
+		"name": "ANS Despesas API",
+		"description": "Coleção Postman para API de Despesas de Operadoras de Saúde da ANS\n\nTeste de Entrada\nParte 4: API e Interface Web",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Operadoras",
+			"item": [
+				{
+					"name": "Listar Operadoras (Paginado)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/api/operadoras?page=1&limit=10",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"operadoras"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "Número da página (padrão: 1)"
+								},
+								{
+									"key": "limit",
+									"value": "10",
+									"description": "Registros por página (padrão: 10, máx: 100)"
+								},
+								{
+									"key": "search",
+									"value": "",
+									"description": "Busca por razão social ou CNPJ",
+									"disabled": true
+								},
+								{
+									"key": "uf",
+									"value": "",
+									"description": "Filtrar por UF",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Lista todas as operadoras com paginação.\n\n**Parâmetros:**\n- `page`: Número da página (padrão: 1)\n- `limit`: Itens por página (padrão: 10, máximo: 100)\n- `search`: Busca por razão social ou CNPJ (opcional)\n- `uf`: Filtrar por UF (opcional)\n\n**Resposta esperada:**\n```json\n{\n  \"data\": [\n    {\n      \"cnpj\": \"12345678000190\",\n      \"razao_social\": \"Operadora Exemplo\",\n      \"modalidade\": \"Cooperativa Médica\",\n      \"uf\": \"SP\"\n    }\n  ],\n  \"total\": 791,\n  \"page\": 1,\n  \"limit\": 10,\n  \"total_pages\": 80\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Operadoras - Com Busca",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/api/operadoras?search=bradesco&limit=5",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"operadoras"
+							],
+							"query": [
+								{
+									"key": "search",
+									"value": "bradesco"
+								},
+								{
+									"key": "limit",
+									"value": "5"
+								}
+							]
+						},
+						"description": "Exemplo de busca por termo na razão social ou CNPJ"
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Operadoras - Filtrar por UF",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/api/operadoras?uf=SP&limit=20",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"operadoras"
+							],
+							"query": [
+								{
+									"key": "uf",
+									"value": "SP"
+								},
+								{
+									"key": "limit",
+									"value": "20"
+								}
+							]
+						},
+						"description": "Exemplo de filtro por estado (UF)"
+					},
+					"response": []
+				},
+				{
+					"name": "Detalhes da Operadora",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/api/operadoras/00000000000191",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"operadoras",
+								"00000000000191"
+							]
+						},
+						"description": "Retorna informações detalhadas de uma operadora específica.\n\n**Parâmetros:**\n- `cnpj`: CNPJ da operadora (14 dígitos, apenas números)\n\n**Resposta esperada:**\n```json\n{\n  \"cnpj\": \"00000000000191\",\n  \"razao_social\": \"Operadora Exemplo\",\n  \"registro_ans\": \"300011\",\n  \"modalidade\": \"Cooperativa Médica\",\n  \"uf\": \"SP\",\n  \"total_despesas\": 1500000.50,\n  \"media_despesas\": 500000.17,\n  \"total_trimestres\": 3\n}\n```\n\n**Erro 404:**\n```json\n{\n  \"detail\": \"Operadora não encontrada\"\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Histórico de Despesas",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/api/operadoras/00000000000191/despesas",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"operadoras",
+								"00000000000191",
+								"despesas"
+							]
+						},
+						"description": "Retorna o histórico de despesas trimestrais de uma operadora.\n\n**Parâmetros:**\n- `cnpj`: CNPJ da operadora (14 dígitos, apenas números)\n\n**Resposta esperada:**\n```json\n{\n  \"cnpj\": \"00000000000191\",\n  \"razao_social\": \"Operadora Exemplo\",\n  \"despesas\": [\n    {\n      \"ano\": 2025,\n      \"trimestre\": 1,\n      \"valor_despesas\": 450000.00,\n      \"periodo\": \"2025-Q1\"\n    },\n    {\n      \"ano\": 2025,\n      \"trimestre\": 2,\n      \"valor_despesas\": 520000.00,\n      \"periodo\": \"2025-Q2\"\n    },\n    {\n      \"ano\": 2025,\n      \"trimestre\": 3,\n      \"valor_despesas\": 530000.50,\n      \"periodo\": \"2025-Q3\"\n    }\n  ],\n  \"total_despesas\": 1500000.50,\n  \"total_trimestres\": 3\n}\n```"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints relacionados às operadoras de saúde"
+		},
+		{
+			"name": "Estatísticas",
+			"item": [
+				{
+					"name": "Estatísticas Gerais",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/api/estatisticas",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"estatisticas"
+							]
+						},
+						"description": "Retorna estatísticas agregadas do sistema.\n\n**Resposta esperada:**\n```json\n{\n  \"total_operadoras\": 791,\n  \"total_despesas\": 1500000000.00,\n  \"media_despesas\": 1898734.18,\n  \"top_5_operadoras\": [\n    {\n      \"cnpj\": \"12345678000190\",\n      \"razao_social\": \"Operadora A\",\n      \"total_despesas\": 100000000.00,\n      \"uf\": \"SP\"\n    }\n  ],\n  \"distribuicao_uf\": [\n    {\n      \"uf\": \"SP\",\n      \"total_operadoras\": 300,\n      \"total_despesas\": 500000000.00,\n      \"percentual\": 33.3\n    }\n  ]\n}\n```"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints de estatísticas e análises agregadas"
+		},
+		{
+			"name": "Health Check",
+			"item": [
+				{
+					"name": "Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/health",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"health"
+							]
+						},
+						"description": "Verifica se a API está funcionando.\n\n**Resposta esperada:**\n```json\n{\n  \"status\": \"ok\",\n  \"database\": \"connected\"\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Documentação Interativa",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/docs",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"docs"
+							]
+						},
+						"description": "Acessa a documentação interativa Swagger UI gerada automaticamente pelo FastAPI."
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints utilitários"
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000",
+			"type": "string"
+		}
+	]
+}
