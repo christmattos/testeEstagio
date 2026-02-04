@@ -1,6 +1,10 @@
 """
 API REST para consulta de dados de operadoras de saúde
 Desenvolvido com FastAPI + Python 3.13
+
+Trade-off: FastAPI vs Flask
+Decisão: FastAPI 
+Para este projeto, fastAPI é ideal pois oferece documentação automática
 """
 
 from fastapi import FastAPI, HTTPException, Query
@@ -95,6 +99,15 @@ class Estatisticas(BaseModel):
     data_atualizacao: str
 
 class PaginatedResponse(BaseModel):
+    """
+    Trade-off: Estrutura de resposta da API
+    Decisão: Dados + Metadados (Opção B)
+    
+    Justificativa:
+    Frontend precisa de total_items para calcular páginas
+    Facilita implementação de paginação no cliente
+    Melhora UX (mostra "Página 1 de 10")
+    """
     data: List[dict]
     total_items: int
     page: int
@@ -108,6 +121,11 @@ class PaginatedResponse(BaseModel):
 class DatabaseConnection:
     """
     Trade-off: Fonte de dados (CSV vs Banco de Dados)
+    Decisão: MySQL (Parte 3)
+    
+    Justificativa:
+    Dados já carregados e normalizados na Parte 3
+    Queries otimizadas com índices
     """
     
     def __init__(self):
@@ -131,8 +149,8 @@ class DatabaseConnection:
             cursor.execute("SHOW TABLES")
             tabelas = [t[0] for t in cursor.fetchall()]
             
-            logger.info(f"Conectado ao MySQL - Banco: ans_despesas")
-            logger.info(f"Tabelas encontradas: {', '.join(tabelas)}")
+            logger.info(f"✅ Conectado ao MySQL - Banco: ans_despesas")
+            logger.info(f"✅ Tabelas encontradas: {', '.join(tabelas)}")
             
             # Contar registros
             for tabela in ['operadoras', 'despesas_consolidadas', 'despesas_agregadas']:
@@ -197,6 +215,12 @@ async def listar_operadoras(
 ):
     """
     Lista todas as operadoras com paginação
+    
+    Trade-off: Estratégia de Paginação
+    Decisão: Offset-based (Opção A)
+    
+    Justificativa:
+    Simples de implementar
     """
     try:
         conn = db.get_connection()
@@ -372,6 +396,16 @@ async def obter_despesas_operadora(cnpj: str):
 async def obter_estatisticas(busca: str = None):
     """
     Retorna estatísticas gerais agregadas
+    
+    Parâmetros:
+      - busca: Filtro opcional por razão social ou CNPJ
+    
+    Trade-off: Cache vs Queries Diretas
+    Decisão: Calcular sempre na hora (Opção A) para demonstração
+    
+    Justificativa:
+    Dados sempre atualizados
+    Simples de implementar
     """
     try:
         conn = db.get_connection()
@@ -556,17 +590,17 @@ if __name__ == "__main__":
     import uvicorn
     
     print("=" * 80)
-    print("API de Operadoras de Saúde")
+    print("🚀 API de Operadoras de Saúde")
     print("=" * 80)
-    print("\nDocumentação interativa:")
+    print("\n📚 Documentação interativa:")
     print("   Swagger UI: http://localhost:8000/docs")
     print("   ReDoc:      http://localhost:8000/redoc")
-    print("\nEndpoints disponíveis:")
+    print("\n🔌 Endpoints disponíveis:")
     print("   GET  /api/operadoras")
     print("   GET  /api/operadoras/{cnpj}")
     print("   GET  /api/operadoras/{cnpj}/despesas")
     print("   GET  /api/estatisticas")
-    print("\nServidor iniciando...\n")
+    print("\n✅ Servidor iniciando...\n")
     
     uvicorn.run(
         "main:app",
