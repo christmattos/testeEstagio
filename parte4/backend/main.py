@@ -149,8 +149,8 @@ class DatabaseConnection:
             cursor.execute("SHOW TABLES")
             tabelas = [t[0] for t in cursor.fetchall()]
             
-            logger.info(f"✅ Conectado ao MySQL - Banco: ans_despesas")
-            logger.info(f"✅ Tabelas encontradas: {', '.join(tabelas)}")
+            logger.info(f"Conectado ao MySQL - Banco: ans_despesas")
+            logger.info(f"Tabelas encontradas: {', '.join(tabelas)}")
             
             # Contar registros
             for tabela in ['operadoras', 'despesas_consolidadas', 'despesas_agregadas']:
@@ -590,17 +590,17 @@ if __name__ == "__main__":
     import uvicorn
     
     print("=" * 80)
-    print("🚀 API de Operadoras de Saúde")
+    print("API de Operadoras de Saúde")
     print("=" * 80)
-    print("\n📚 Documentação interativa:")
+    print("\n Documentação interativa:")
     print("   Swagger UI: http://localhost:8000/docs")
     print("   ReDoc:      http://localhost:8000/redoc")
-    print("\n🔌 Endpoints disponíveis:")
+    print("\nEndpoints disponíveis:")
     print("   GET  /api/operadoras")
     print("   GET  /api/operadoras/{cnpj}")
     print("   GET  /api/operadoras/{cnpj}/despesas")
     print("   GET  /api/estatisticas")
-    print("\n✅ Servidor iniciando...\n")
+    print("\nServidor iniciando...\n")
     
     uvicorn.run(
         "main:app",
