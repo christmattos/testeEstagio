@@ -34,7 +34,7 @@ Antes de começar, certifique-se de ter instalado:
       pip install -r parte1\requirements.txt
       pip install -r parte2\requirements.txt
       pip install -r parte3\requirements.txt
-      pip install -r parte4\requirements.txt
+      pip install -r parte4\backend\requirements.txt
    ```
 4. **Configure o MySQL**
    - Usuário: `root`
