@@ -105,7 +105,7 @@ class ANSDataIntegrator:
                             trimestre = f"{trimestre_num}T"
                             url_completa = ano_url + zip_href
                             trimestres.append((ano_arquivo, trimestre, url_completa))
-                            logger.info(f"  Encontrado: {trimestre}/{ano_arquivo} -> {zip_href}")
+                            logger.info(f"Encontrado: {trimestre}/{ano_arquivo} -> {zip_href}")
             
             # Ordenar por ano e trimestre (mais recentes primeiro)
             trimestres.sort(key=lambda x: (int(x[0]), int(x[1][0])), reverse=True)
@@ -297,10 +297,10 @@ class ANSDataIntegrator:
                     logger.info(f"Processando arquivo: {arquivo.name}")
                     dados = self.processar_arquivo_despesas(arquivo, ano, trimestre)
                     if dados:
-                        logger.info(f"  -> Encontrados {len(dados)} registros")
+                        logger.info(f"-> Encontrados {len(dados)} registros")
                         dados_consolidados.extend(dados)
                     else:
-                        logger.info(f"  -> Nenhum registro de despesas encontrado")
+                        logger.info(f"-> Nenhum registro de despesas encontrado")
             
             # Limpar diretório temporário
             import shutil
@@ -425,7 +425,7 @@ class ANSDataIntegrator:
                     # Progress bar a cada 10%
                     if idx > 0 and idx % max(1, total_linhas // 10) == 0:
                         percentual = (idx / total_linhas) * 100
-                        logger.info(f"  Progresso: {percentual:.0f}% ({idx}/{total_linhas} linhas)")
+                        logger.info(f"Progresso: {percentual:.0f}% ({idx}/{total_linhas} linhas)")
                     
                     conta = str(row[conta_col]) if conta_col else ""
                     descricao = str(row[descricao_col]).lower()
@@ -625,7 +625,7 @@ class ANSDataIntegrator:
         ultimos_3_trimestres = trimestres[:3]
         logger.info(f"Processando últimos 3 trimestres:")
         for ano, trim, url in ultimos_3_trimestres:
-            logger.info(f"  - {trim}/{ano}")
+            logger.info(f"{trim}/{ano}")
         
         # 3. Baixar e processar cada trimestre
         todos_dados = []
@@ -661,8 +661,8 @@ class ANSDataIntegrator:
         
         logger.info(f"ZIP criado: {zip_path}")
         logger.info(f"\n Arquivos gerados:")
-        logger.info(f"   - {csv_path.name} ({len(df_consolidado)} registros)")
-        logger.info(f"   - {zip_path.name} (arquivo compactado)")
+        logger.info(f"- {csv_path.name} ({len(df_consolidado)} registros)")
+        logger.info(f"- {zip_path.name} (arquivo compactado)")
         
         logger.info("\n=== Integração concluída com sucesso! ===")
 

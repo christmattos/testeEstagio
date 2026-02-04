@@ -26,63 +26,10 @@ if errorlevel 1 (
 )
 echo.
 
-REM Criar virtual environment
-echo [INFO] Criando virtual environment (.venv)...
-if exist ".venv" (
-    echo [INFO] .venv ja existe, pulando criacao
-) else (
-    python -m venv .venv
-    if errorlevel 1 (
-        echo [ERRO] Falha ao criar virtual environment
-        pause
-        exit /b 1
-    )
-    echo [OK] Virtual environment criado
-)
-echo.
-
-REM Ativar virtual environment
-echo [INFO] Ativando virtual environment...
-call .venv\Scripts\activate.bat
-if errorlevel 1 (
-    echo [ERRO] Falha ao ativar virtual environment
-    pause
-    exit /b 1
-)
-echo [OK] Virtual environment ativado
-echo.
-
 REM Atualizar pip
 echo [INFO] Atualizando pip...
 python -m pip install --upgrade pip
 echo.
-
-REM Instalar dependencias de cada parte
-echo [INFO] Instalando dependencias...
-echo.
-
-echo [1/4] Parte 1 - Integracao ANS
-if exist "parte1\requirements.txt" (
-    pip install -r parte1\requirements.txt
-)
-
-echo.
-echo [2/4] Parte 2 - Transformacao e Validacao
-if exist "parte2\requirements.txt" (
-    pip install -r parte2\requirements.txt
-)
-
-echo.
-echo [3/4] Parte 3 - Banco de Dados
-if exist "parte3\requirements.txt" (
-    pip install -r parte3\requirements.txt
-)
-
-echo.
-echo [4/4] Parte 4 - Backend FastAPI
-if exist "parte4\backend\requirements.txt" (
-    pip install -r parte4\backend\requirements.txt
-)
 
 echo.
 echo ========================================
