@@ -38,8 +38,9 @@ echo ========================================
 echo.
 echo Proximos passos:
 echo.
-echo 1. Configure o MySQL (usuario: root, senha: 1234)
-echo 2. Execute as partes do teste em ordem:
+echo 1. Configure o MySQL (usuario: root, senha: 1234);
+echo 2. Instale TODAS as dependencias;
+echo 3. Execute as partes do teste em ordem:
 echo    - Parte 1: cd parte1 ^&^& python integracao_ans.py
 echo    - Parte 2: cd parte2 ^&^& python transformacao_validacao.py
 echo    - Parte 3: cd parte3 ^&^& python load_data.py
