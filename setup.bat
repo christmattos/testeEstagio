@@ -1,6 +1,6 @@
 @echo off
 echo ========================================
-echo  SETUP - Teste Estagio Intuitive Care
+echo  SETUP - Teste Estagio
 echo ========================================
 echo.
 
