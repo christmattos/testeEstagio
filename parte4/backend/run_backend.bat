@@ -48,6 +48,17 @@ echo.
 REM Navegar para pasta do backend
 cd parte4\backend
 
+REM Instalar dependencias
+echo [INFO] Instalando dependencias...
+pip install -r requirements.txt
+if errorlevel 1 (
+    echo [ERRO] Falha ao instalar dependencias
+    pause
+    exit /b 1
+)
+echo [OK] Dependencias instaladas
+echo.
+
 echo [INFO] Iniciando servidor FastAPI...
 echo [INFO] API disponivel em: http://localhost:8000/api
 echo [INFO] Documentacao Swagger: http://localhost:8000/docs

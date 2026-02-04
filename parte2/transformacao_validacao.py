@@ -428,7 +428,7 @@ class TransformadorDados:
             # Salvar APENAS o arquivo de despesas agregadas (conforme especificação 2.3)
             arquivo_agregado = self.resultados_dir / 'despesas_agregadas.csv'
             df_agregado.to_csv(arquivo_agregado, index=False, encoding='utf-8-sig')
-            logger.info(f"✅ Dados agregados salvos em: {arquivo_agregado}")
+            logger.info(f"Dados agregados salvos em: {arquivo_agregado}")
             
             # Compactar em ZIP (conforme especificação 2.3)
             import zipfile
@@ -436,7 +436,7 @@ class TransformadorDados:
             with zipfile.ZipFile(arquivo_zip, 'w', zipfile.ZIP_DEFLATED) as zipf:
                 zipf.write(arquivo_agregado, 'despesas_agregadas.csv')
             
-            logger.info(f"✅ Arquivo compactado criado: {arquivo_zip}")
+            logger.info(f"Arquivo compactado criado: {arquivo_zip}")
             
             # Estatísticas finais
             logger.info("\n=== ESTATÍSTICAS FINAIS ===")
@@ -451,16 +451,16 @@ class TransformadorDados:
             for uf, valor in por_uf.head(5).items():
                 logger.info(f"  {uf}: R$ {valor:,.2f}")
             
-            logger.info("\n📦 SAÍDA FINAL:")
+            logger.info("\nSAÍDA FINAL:")
             logger.info(f"   - despesas_agregadas.csv ({len(df_agregado)} registros)")
             logger.info(f"   - Teste_Christopher.zip (arquivo compactado)")
         
         logger.info("\n=== TRANSFORMAÇÃO CONCLUÍDA COM SUCESSO! ===")
-        logger.info("\n📋 RESUMO DO PROCESSAMENTO:")
+        logger.info("\nRESUMO DO PROCESSAMENTO:")
         logger.info(f"   2.1. Validação: {len(df_validado)} registros processados")
         logger.info(f"   2.2. Enriquecimento: {len(df_enriquecido)} registros enriquecidos")
         logger.info(f"   2.3. Agregação: {len(df_agregado)} grupos criados")
-        logger.info(f"\n✅ Arquivo final: {arquivo_zip}")
+        logger.info(f"\nArquivo final: {arquivo_zip}")
 
 
 def main():
