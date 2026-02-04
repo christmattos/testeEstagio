@@ -25,14 +25,18 @@ Antes de começar, certifique-se de ter instalado:
    ```
    
    Este script irá:
-   - Verificar se Python está instalado
-   - Criar o ambiente virtual (`.venv`)
-   - Instalar todas as dependências
-   - Configurar o projeto
+   - Verificar se Python, MYSQL e pip estão instalados
 
-   Ou também instale as dependências uma por uma, pois o virtual environment se instala também pelo run_backend.bat.
+3. **Instale as dependências**  
+   Instale as dependências uma por uma:
 
-3. **Configure o MySQL**
+   ```
+      pip install -r parte1\requirements.txt
+      pip install -r parte2\requirements.txt
+      pip install -r parte3\requirements.txt
+      pip install -r parte4\requirements.txt
+   ```
+4. **Configure o MySQL**
    - Usuário: `root`
    - Senha: `1234`
    - Porta: `3306`
@@ -247,3 +251,32 @@ python -m http.server 5173
 - Gráfico atualiza automaticamente ao buscar/paginar
 - Aproveita reatividade do Vue.js
 - Menos código imperativo
+
+#### **14. Trade-off: Estrutura de resposta da API**
+**Decisão:** Dados + Metadados (Opção B)
+
+**Justificativa:**
+- Frontend precisa de total_items para calcular páginas
+- Facilita implementação de paginação no cliente
+- Melhora UX (mostra "Página 1 de 10")
+
+#### **15. Trade-off: Fonte de dados (CSV vs Banco de Dados)**
+**Decisão:** MySQL (Parte 3)
+    
+**Justificativa:**
+- Dados já carregados e normalizados na Parte 3
+- Queries otimizadas com índices
+
+
+#### **16. Trade-off: Estratégia de Paginação**
+**Decisão:** Offset-based (Opção A)
+
+**Justificativa:**
+- Simples de implementar
+
+#### **17. Trade-off: Cache vs Queries Diretas**
+**Decisão:** Calcular sempre na hora (Opção A) para demonstração
+
+**Justificativa:**
+- Dados sempre atualizados
+- Simples de implementar
